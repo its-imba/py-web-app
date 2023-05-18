@@ -1,6 +1,6 @@
 # py-web-app
 
-Steps to run/test locally:
+## Steps to run/test locally:
 
 Ensure python is installed first.
 
@@ -18,4 +18,4 @@ Install flask and other dependencies from the requirements.txt file:
 
 Run the python script that starts the app
 
-python3 main.py
+```python3 main.py```
