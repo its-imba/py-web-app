@@ -19,12 +19,20 @@ pipeline {
             }
         }
 
+        stage('Remove Existing Docker Containers') {
+            steps {
+                script {
+                    sh 'docker ps -a | grep py-web-app | awk \'{print $1}\' | xargs -r docker rm -f'
+                }
+            }
+        }
+
         stage('Run Docker Container') {
             steps {
                 script {
                     def containerName = "py-web-app"
 
-                    docker.image('py-web-app:latest').start("-p 5000:5000 --name ${containerName}")
+                    docker.image('py-web-app:latest').run("-p 5000:5000 --name ${containerName}")
                 }
             }
         }
