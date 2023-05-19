@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git branch: 'main', url: 'https://github.com/its-imba/py-web-app.git'
+                checkout scm
             }
         }
 
