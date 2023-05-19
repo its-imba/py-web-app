@@ -19,3 +19,13 @@ Install flask and other dependencies from the requirements.txt file:
 Run the python script that starts the app
 
 ```python3 main.py```
+
+## Steps to run in a Docker container
+
+Pull the image from Docker:
+
+```docker pull samhiscox/py-web-app```
+
+Run the container (tag might need changing):
+
+```docker run -d -p 5000:5000 --name py-web-app samhiscox/py-web-app:v1.1```
