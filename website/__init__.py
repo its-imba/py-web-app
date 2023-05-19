@@ -2,7 +2,6 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from os.path import join
 from flask_login import LoginManager
-from . import models
 
 db = SQLAlchemy()
 DB_NAME = 'database.db'
@@ -34,6 +33,7 @@ def create_app():
     app.register_blueprint(auth, url_prefix='/')
 
     # Create the database tables
+    from . import models  # Import models here to avoid circular import
     with app.app_context():
         db.create_all()
 
