@@ -1,22 +1,65 @@
-{% extends "base.html" %} {% block title %}Home{% endblock %} {% block content
-    %}
-    <h1 align="center">Notes</h1>
-    <ul class="list-group list-group-flush" id="notes">
-      {% for note in user.notes %}
-      <li class="list-group-item">
-        {{ note.data }}
-        <button type="button" class="close" onClick="deleteNote({{ note.id }})">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </li>
-      {% endfor %}
-    </ul>
-    <form method="POST">
-      <textarea name="note" id="note" class="form-control"></textarea>
-      <br />
-      <div align="center">
-        <button type="submit" class="btn btn-primary">Add Note</button>
-      </div>
-    </form>
-    {% endblock %}
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<h1 align="center">Notes</h1>
+<ul class="list-group list-group-flush" id="notes">
+  {% for note in user.notes %}
+  <li class="list-group-item note" data-note-id="{{ note.id }}">
+    <div class="note-text">{{ note.data }}</div>
+    <div class="btn-group" role="group">
+      <button type="button" class="btn btn-danger" onClick="deleteNote({{ note.id }})">
+        <span aria-hidden="true">&times;</span>
+      </button>
+      <button type="button" class="btn btn-primary edit-button" data-note-id="{{ note.id }}">Edit</button>
+    </div>
+  </li>
+  {% endfor %}
+</ul>
+<form method="POST">
+  <textarea name="note" id="note" class="form-control"></textarea>
+  <br />
+  <div align="center">
+    <button type="submit" class="btn btn-primary" id="add-note-button">Add Note</button>
+    <button type="button" class="btn btn-primary update-button" style="display: none;">Update Note</button>
+  </div>
+</form>
+
+<script>
+  document.querySelectorAll('.edit-button').forEach(function(button) {
+    button.addEventListener('click', function() {
+      var noteId = button.getAttribute('data-note-id');
+      var noteTextElement = document.querySelector('.note[data-note-id="' + noteId + '"] .note-text');
+      var noteText = noteTextElement.textContent;
+      noteTextElement.innerHTML = '<input type="text" class="edit-input" value="' + noteText + '">';
+      button.style.display = 'none';
+      document.querySelector('.update-button').style.display = 'inline-block';
+    });
+  });
+  
+  document.querySelector('.update-button').addEventListener('click', function() {
+    var noteId = document.querySelector('.edit-input').closest('.note').getAttribute('data-note-id');
+    var updatedText = document.querySelector('.edit-input').value;
     
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', '/update-note', true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.send(JSON.stringify({
+      noteId: noteId,
+      updatedText: updatedText
+    }));
+  
+    xhr.onload = function() {
+      if (xhr.status === 200) {
+        // Handle the successful update
+        var noteTextElement = document.querySelector('.note[data-note-id="' + noteId + '"] .note-text');
+        noteTextElement.innerHTML = updatedText;
+        document.querySelector('.update-button').style.display = 'none';
+        document.querySelector('.edit-button[data-note-id="' + noteId + '"]').style.display = 'inline-block';
+      } else {
+        // Handle errors
+      }
+    };
+  });
+  
+</script>
+{% endblock %}
