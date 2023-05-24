@@ -28,10 +28,11 @@ def login():
     return render_template("login.html", user=current_user)
 
 
-@auth.route('/logout')
+@auth.route('/logout', methods=['GET']) 
 @login_required
 def logout():
     logout_user()
+    flash('Logged out successfully', category='success')
     return redirect(url_for('auth.login'))
 
 
