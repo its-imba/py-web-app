@@ -10,28 +10,28 @@ pipeline {
 
         stage('Testing Setup') {
             steps {
-                sh 'sudo apt-get update'
                 sh 'sudo apt-get install -y python3 python3-pip python3-venv'
                 sh 'python3 -m venv ${WORKSPACE}/venv'  // Create a virtual environment
                 sh '. ${WORKSPACE}/venv/bin/activate'  // Activate the virtual environment
                 sh 'cd ${WORKSPACE}'
-                sh 'pip install -r requirements.txt'  // Install other dependencies from a requirements file
                 sh 'export PATH=/var/lib/jenkins/.local/bin:$PATH'  // Add the directory to PATH
+                sh 'pip install -r requirements.txt'  // Install other dependencies from a requirements file
             }
         }
 
         stage('Verify Dependencies') {
             steps {
-                sh 'pytest --version'
+                sh 'python3 -m pytest --version' // Check pytest is installed
             }
         }
 
         stage('Testing') {
             steps {
                 sh '''
-        python -c "import sys; sys.path.append('/path/to/main/app/directory')"
-        pytest --verbose --cov=tests/
-        '''
+                python3 -c "import sys; sys.path.append('/var/lib/jenkins/workspace/py-app-dev-v2')"
+                python3 -m pytest --verbose --cov=tests/ --cov-report=xml
+                '''
+                cobertura coberturaReportFile: 'coverage.xml'
             }
         }
 

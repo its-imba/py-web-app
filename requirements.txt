@@ -19,10 +19,10 @@ Mako==1.2.4
 MarkupSafe==2.1.1
 packaging==23.0
 pluggy==1.0.0
-pygame==2.1.2
 pytest==7.2.1
 SQLAlchemy==1.4.41
 tomli==2.0.1
 typing_extensions==4.6.0
 Werkzeug==2.2.2
 WTForms==3.0.1
+pytest-cov
