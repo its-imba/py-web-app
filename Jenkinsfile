@@ -10,7 +10,7 @@ pipeline {
 
         stage('Testing Setup') {
             steps {
-                cd ${WORKSPACE}
+                cd '${WORKSPACE}'
                 sh 'python -m venv myenv'  // Create a virtual environment
                 sh 'source myenv/bin/activate'  // Activate the virtual environment
                 sh 'pip install pytest'  // Install pytest
