@@ -13,8 +13,8 @@ pipeline {
                 sh 'sudo apt-get update'
                 sh 'sudo apt-get install -y python3 python3-pip python3-venv'
                 sh 'pip install pytest'  // Install pytest
-                sh 'python3 -m venv ${WORKSPACE}/venv'  # Create a virtual environment
-                sh 'source ${WORKSPACE}/venv/bin/activate'  # Activate the virtual environment
+                sh 'python3 -m venv ${WORKSPACE}/venv'  // Create a virtual environment
+                sh 'source ${WORKSPACE}/venv/bin/activate'  // Activate the virtual environment
                 sh 'cd ${WORKSPACE}'
                 sh 'pip install -r requirements.txt'  // Install other dependencies from a requirements file
             }
