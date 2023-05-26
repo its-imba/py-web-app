@@ -21,7 +21,7 @@ pipeline {
 
         stage('Verify Dependencies') {
             steps {
-                sh 'python pytest --version'
+                sh 'python3 pytest --version'
             }
         }
 
