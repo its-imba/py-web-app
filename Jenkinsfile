@@ -16,7 +16,7 @@ pipeline {
                 sh '. ${WORKSPACE}/venv/bin/activate'  // Activate the virtual environment
                 sh 'cd ${WORKSPACE}'
                 sh 'pip install -r requirements.txt'  // Install other dependencies from a requirements file
-                sh 'export PATH=/var/lib/jenkins/.local/bin:$PATH'  // Add the directory to PATH
+                sh 'export PATH=/var/lib/jenkins/.local/lib/python3.10/site-packages:$PATH'  // Add the directory to PATH
             }
         }
 
