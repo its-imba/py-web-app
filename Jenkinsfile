@@ -10,6 +10,7 @@ pipeline {
 
         stage('Testing Setup') {
             steps {
+                cd ${WORKSPACE}
                 sh 'python -m venv myenv'  // Create a virtual environment
                 sh 'source myenv/bin/activate'  // Activate the virtual environment
                 sh 'pip install pytest'  // Install pytest
@@ -25,7 +26,10 @@ pipeline {
 
         stage('Testing') {
             steps {
-                sh 'pytest --verbose'
+                sh '''
+        python -c "import sys; sys.path.append('/path/to/main/app/directory')"
+        pytest --verbose --cov=tests/
+        '''
             }
         }
 
