@@ -21,14 +21,14 @@ pipeline {
 
         stage('Verify Dependencies') {
             steps {
-                sh 'python3 -m pytest --version'
+                sh 'python3 -m pytest --version' // Check pytest is installed
             }
         }
 
         stage('Testing') {
             steps {
                 sh '''
-        python -c "import sys; sys.path.append('/path/to/main/app/directory')"
+        python -c "import sys; sys.path.append('/var/lib/jenkins/workspace/py-app-dev-v2')"
         pytest --verbose --cov=tests/
         '''
             }
