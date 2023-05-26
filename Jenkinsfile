@@ -29,7 +29,7 @@ pipeline {
             steps {
                 sh '''
                 python3 -c "import sys; sys.path.append('/var/lib/jenkins/workspace/py-app-dev-v2')"
-                pytest --verbose --cov=tests/
+                python3 -m pytest --verbose --cov=tests/
         '''
             }
         }
