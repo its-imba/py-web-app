@@ -25,7 +25,7 @@ pipeline {
 
         stage('Testing') {
             steps {
-                sh 'pytest --verbose --cov=website/tests/'
+                sh 'pytest --verbose'
             }
         }
 
