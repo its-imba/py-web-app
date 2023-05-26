@@ -11,7 +11,7 @@ pipeline {
         stage('Testing Setup') {
             steps {
                 sh 'sudo apt-get update'
-                sh 'sudo apt-get install -y python3 python3-venv'
+                sh 'sudo apt-get install -y python3 python3-pip python3-venv'
                 sh 'pip install pytest'  // Install pytest
                 sh 'python -m venv myenv'  // Create a virtual environment
                 sh 'source myenv/bin/activate'  // Activate the virtual environment
