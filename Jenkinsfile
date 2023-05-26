@@ -10,12 +10,12 @@ pipeline {
 
         stage('Testing Setup') {
             steps {
-                sh 'cd ${WORKSPACE}'
                 sh 'sudo apt-get update'
                 sh 'sudo apt-get install -y python3 python3-venv'
+                sh 'pip install pytest'  // Install pytest
                 sh 'python -m venv myenv'  // Create a virtual environment
                 sh 'source myenv/bin/activate'  // Activate the virtual environment
-                sh 'pip install pytest'  // Install pytest
+                sh 'cd ${WORKSPACE}'
                 sh 'pip install -r requirements.txt'  // Install other dependencies from a requirements file
             }
         }
