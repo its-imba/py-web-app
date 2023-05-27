@@ -1,4 +1,5 @@
 import os
+import pytest
 
 os.environ['PYTHONPATH'] = '/Users/samhiscox/py-web-app:' + os.environ.get('PYTHONPATH', '')
 
@@ -14,3 +15,6 @@ def test_app_execution():
     app.config['DEBUG'] = True  # Set debug mode explicitly for testing
     assert app.debug is True
     assert app.config['DEBUG'] is True
+
+if __name__ == '__main__':
+    pytest.main()
