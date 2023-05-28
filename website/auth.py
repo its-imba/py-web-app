@@ -4,7 +4,7 @@ This is the auth module.
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, login_required, logout_user, current_user
-from .models import User
+from .models import User, UserProfile
 from . import db
 
 auth = Blueprint('auth', __name__)
@@ -72,8 +72,14 @@ def sign_up():
             )
             db.session.add(new_user)
             db.session.commit()
+
+            # Create a user profile and associate it with the new user
+            new_profile = UserProfile(user=new_user)
+            db.session.add(new_profile)
+            db.session.commit()
+
             login_user(new_user, remember=True)
             flash('Account created!', category='success')
-            return redirect(url_for('views.home'))
+            return redirect(url_for('views.edit_profile'))
 
     return render_template("sign_up.html", user=current_user)

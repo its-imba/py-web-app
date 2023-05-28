@@ -22,4 +22,21 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(150), unique=True)
     password = db.Column(db.String(150))
     first_name = db.Column(db.String(150))
+    last_name = db.Column(db.String(150))
     notes = db.relationship('Note')
+    user_profile = db.relationship('UserProfile', back_populates='user', uselist=False)
+
+class UserProfile(db.Model):
+    """
+    Represents a user profile in the database.
+    """
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), unique=True)
+    about_me = db.Column(db.String(1000), nullable=True)
+    date_of_birth = db.Column(db.Date, nullable=True)
+    favorite_animal = db.Column(db.String(100), nullable=True)
+    location = db.Column(db.String(150), nullable=True)
+    interests = db.Column(db.String(500), nullable=True)
+
+    user = db.relationship('User', back_populates='user_profile')
+

@@ -4,8 +4,9 @@ This module defines the views for the website.
 import json
 from flask import Blueprint, render_template, request, flash, jsonify, redirect, url_for
 from flask_login import login_required, current_user
-from .models import Note
+from .models import Note, User, UserProfile
 from . import db
+from .forms import ProfileForm, SearchForm
 
 views = Blueprint('views', __name__)
 
@@ -114,3 +115,62 @@ def edit_note(note_id):
         print(str(error))
 
     return redirect(url_for('views.home'))
+
+@views.route('/edit-profile', methods=['GET', 'POST'])
+@login_required
+def edit_profile():
+    """
+    Handle the edit profile functionality.
+    """
+    form = ProfileForm()
+
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            current_user.first_name = form.first_name.data
+            current_user.last_name = form.last_name.data
+            current_user.user_profile.about_me = form.about_me.data
+            current_user.user_profile.date_of_birth = form.date_of_birth.data
+            current_user.user_profile.favorite_animal = form.favorite_animal.data
+            current_user.user_profile.location = form.location.data
+            current_user.user_profile.interests = form.interests.data
+            db.session.commit()
+            flash('Profile updated!', category='success')
+            return redirect(url_for('views.home'))
+        else:
+            flash('Invalid input', category='error')
+
+    # Pre-populate the form fields with the current user's data
+    form.first_name.data = current_user.first_name
+    form.last_name.data = current_user.last_name
+    form.about_me.data = current_user.user_profile.about_me
+    form.date_of_birth.data = current_user.user_profile.date_of_birth
+    form.favorite_animal.data = current_user.user_profile.favorite_animal
+    form.location.data = current_user.user_profile.location
+    form.interests.data = current_user.user_profile.interests
+
+    return render_template('edit-profile.html', user=current_user, form=form)
+
+
+@views.route('/profile/<int:user_id>')
+@login_required
+def profile(user_id):
+    user_profile = UserProfile.query.get(user_id)
+    return render_template('profile.html', user=user_profile)
+
+@views.route('/search', methods=['GET', 'POST'])
+@login_required  # Assuming you are using a login_required decorator
+def search():
+    form = SearchForm()
+    if form.validate_on_submit():
+        query = form.query.data
+        results = User.query.filter(User.first_name.ilike(f'%{query}%')).all()
+        return render_template('search_results.html', results=results, user=current_user)
+    return render_template('search.html', form=form, user=current_user)
+
+
+@views.route('/profile/<int:user_id>')
+@login_required
+def view_profile(user_id):
+    user = User.query.get(user_id)
+    return render_template('profile.html', user=user)
+
