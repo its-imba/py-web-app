@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Search Results</h1>
+  {% if results %}
+    <ul>
+      {% for user in results %}
+      <li><a href="{{ url_for('views.view_profile', user_id=user.id) }}">{{ user.first_name }}</a></li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No results found.</p>
+  {% endif %}
+{% endblock %}
