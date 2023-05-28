@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>My Profile</h1>
+<p>About Me: {{ user.about_me }}</p>
+<p>Date of Birth: {{ user.date_of_birth }}</p>
+<p>Favorite Animal: {{ user.favorite_animal }}</p>
+<p>Location: {{ user.location }}</p>
+<p>Interests: {{ user.interests }}</p>
+<a href="{{ url_for('views.edit_profile') }}" class="btn btn-primary">Edit Profile</a>
+{% endblock %}
