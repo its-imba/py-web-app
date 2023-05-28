@@ -1,25 +1,31 @@
+"""
+This is the website module.
+"""
 import os
+from os import path
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from os import path
 from flask_login import LoginManager
 
 DB_NAME = 'database.db'
 db = SQLAlchemy()
 
 def create_app():
+    """
+    Creates and configures the Flask application & database.
+    """
     app = Flask(__name__)
     app.config['SECRET_KEY'] = 'dkd93kshaghj429'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-    # Specify the file path within the "backend" directory
+    # Specify the file path for the database within the backend directory
     database_path = os.path.join(os.path.dirname(app.root_path), 'backend', DB_NAME)
     app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{database_path}'
 
     db.init_app(app)
 
     with app.app_context():
-        from . import models  # Import models here to avoid circular import
+        from . import models  # Imported models here to avoid circular import
         db.create_all()
 
     from .views import views
@@ -35,7 +41,7 @@ def create_app():
     @login_manager.user_loader
     def load_user(id):
         return models.User.query.get(int(id))
-    
+
     app.debug = True
 
     return app
