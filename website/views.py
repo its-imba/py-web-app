@@ -213,17 +213,21 @@ def add_friend(user_id):
 @views.route('/accept_friend/<int:request_id>', methods=['POST'])
 @login_required
 def accept_friend(request_id):
-    """
-    Accepts a friend request from another user.
-    """
     try:
         request = FriendshipRequest.query.get(request_id)
 
         if request:
-            friendship = Friendship(user_id=request.sender_id, friend_id=current_user.id, status='accepted')
-            db.session.add(friendship)
+            # Add the friendship relationship for the receiver
+            friendship_receiver = Friendship(user_id=request.sender_id, friend_id=current_user.id, status='accepted')
+            db.session.add(friendship_receiver)
+
+            # Add the friendship relationship for the sender
+            friendship_sender = Friendship(user_id=current_user.id, friend_id=request.sender_id, status='accepted')
+            db.session.add(friendship_sender)
+
             db.session.delete(request)
             db.session.commit()
+
             flash('Friend request accepted', category='success')
         else:
             flash('Friend request not found', category='error')
@@ -231,11 +235,8 @@ def accept_friend(request_id):
         flash('An error occurred while accepting the friend request', category='error')
         print(str(error))
 
-    # Update the friend request status for the other user involved in the friendship
-    FriendshipRequest.query.filter_by(sender_id=current_user.id, receiver_id=request.sender_id).update({"status": "accepted"})
-    db.session.commit()
-
     return redirect(url_for('views.profile', user_id=current_user.id))
+
 
 
 
