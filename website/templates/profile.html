@@ -1,11 +1,57 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>My Profile</h1>
-<p>About Me: {{ user.about_me }}</p>
-<p>Date of Birth: {{ user.date_of_birth }}</p>
-<p>Favorite Animal: {{ user.favorite_animal }}</p>
-<p>Location: {{ user.location }}</p>
-<p>Interests: {{ user.interests }}</p>
-<a href="{{ url_for('views.edit_profile') }}" class="btn btn-primary">Edit Profile</a>
+  <h1>My Profile</h1>
+  <p>First Name: {{ user.first_name }}</p>
+  <p>Last Name: {{ user.last_name }}</p>
+  <p>About Me: {{ user.about_me }}</p>
+  <p>Date of Birth: {{ user.date_of_birth }}</p>
+  <p>Favorite Animal: {{ user.favorite_animal }}</p>
+  <p>Location: {{ user.location }}</p>
+  <p>Interests: {{ user.interests }}</p>
+  <a href="{{ url_for('views.edit_profile') }}" class="btn btn-primary">Edit Profile</a>
+
+  {% if current_user.id == user.user.id %}
+    {% if friends %}
+      <h2>Friends</h2>
+      <ul>
+        {% for friend in friends %}
+          <li>{{ friend.user_profile.first_name }} {{ friend.user_profile.last_name }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  {% endif %}
+
+  {% if current_user.id != user.user.id %}
+    {% if current_user not in user.user.friends %}
+      {% if current_user.sent_friend_requests.filter_by(receiver_id=user.user.id).first() %}
+        <p>Friend request already sent.</p>
+      {% else %}
+        <form action="{{ url_for('views.add_friend', user_id=user.user.id) }}" method="post">
+          <button type="submit" class="btn btn-primary">Add Friend</button>
+        </form>
+      {% endif %}
+    {% else %}
+      <p>You are already friends with this user.</p>
+    {% endif %}
+  {% endif %}
+
+  {% if current_user.id == user.user.id %}
+    {% if received_friend_requests %}
+      <h2>Friend Requests</h2>
+      <ul>
+        {% for request in received_friend_requests %}
+          <li>{{ request.sender.user_profile.first_name }} {{ request.sender.user_profile.last_name }} wants to be your friend.</li>
+          <li>
+            <form action="{{ url_for('views.accept_friend', request_id=request.id) }}" method="post">
+              <button type="submit" class="btn btn-primary">Accept</button>
+            </form>
+            <form action="{{ url_for('views.reject_friend', user_id=request.sender.id) }}" method="post">
+              <button type="submit" class="btn btn-danger">Reject</button>
+            </form>
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  {% endif %}
 {% endblock %}
