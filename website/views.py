@@ -151,12 +151,12 @@ def edit_profile():
     return render_template('edit-profile.html', user=current_user, form=form)
 
 @views.route('/search', methods=['GET', 'POST'])
-@login_required  # Assuming you are using a login_required decorator
+@login_required
 def search():
     form = SearchForm()
     if form.validate_on_submit():
         query = form.query.data
-        results = User.query.filter(UserProfile.first_name.ilike(f'%{query}%')).all()
+        results = User.query.filter(User.user_profile.has(UserProfile.first_name.ilike(f'%{query}%'))).all()
         return render_template('search_results.html', results=results, user=current_user)
     return render_template('search.html', form=form, user=current_user)
 
@@ -175,9 +175,6 @@ def profile(user_id):
     received_friend_requests = FriendshipRequest.query.filter_by(receiver_id=user_id, status='pending').all()
 
     return render_template('profile.html', user=user_profile, friends=friends, received_friend_requests=received_friend_requests)
-
-
-
 
 @views.route('/add_friend/<int:user_id>', methods=['POST'])
 @login_required
@@ -209,7 +206,6 @@ def add_friend(user_id):
 
     return redirect(url_for('views.profile', user_id=user_id))
 
-
 @views.route('/accept_friend/<int:request_id>', methods=['POST'])
 @login_required
 def accept_friend(request_id):
@@ -237,10 +233,6 @@ def accept_friend(request_id):
 
     return redirect(url_for('views.profile', user_id=current_user.id))
 
-
-
-
-
 @views.route('/reject_friend/<int:user_id>', methods=['POST'])
 @login_required
 def reject_friend(user_id):
@@ -265,4 +257,3 @@ def reject_friend(user_id):
         print(str(error))
 
     return redirect(url_for('views.profile', user_id=current_user.id))
-
