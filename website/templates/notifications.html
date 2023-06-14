@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Notifications</h1>
+    {% if notifications %}
+        <ul>
+        {% for notification in notifications %}
+            <li>
+                {{ notification.message }}
+                {% if notification.is_read %}
+                    <p>Already read</p>
+                {% else %}
+                    <form action="{{ url_for('views.accept_friend', request_id=notification.id) }}" method="POST">
+                        <button type="submit" class="btn btn-primary">Accept</button>
+                    </form>
+                    <form action="{{ url_for('views.reject_friend', user_id=notification.sender_id) }}" method="POST">
+                        <button type="submit" class="btn btn-danger">Decline</button>
+                    </form>
+                {% endif %}
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No new notifications</p>
+    {% endif %}
+{% endblock %}
