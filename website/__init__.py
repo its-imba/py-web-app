@@ -3,9 +3,9 @@ This is the website module.
 """
 import os
 from os import path
-from flask import Flask
+from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager
+from flask_login import LoginManager, current_user
 from flask_migrate import Migrate
 
 DB_NAME = 'database.db'
@@ -44,5 +44,13 @@ def create_app():
         return models.User.query.get(int(id))
 
     app.debug = True
+
+    # Context processor for notification count
+    @app.context_processor
+    def notification_count():
+        if current_user.is_authenticated:
+            user_notifications = models.Notification.query.filter_by(user_id=current_user.id, is_read=False).all()
+            return {'notification_count': len(user_notifications)}
+        return {'notification_count': 0}
 
     return app

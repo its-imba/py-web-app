@@ -4,6 +4,7 @@ This module defines the models for the website.
 from flask_login import UserMixin
 from sqlalchemy.sql import func
 from . import db
+from datetime import datetime
 
 class Note(db.Model):
     """
@@ -48,7 +49,6 @@ class User(db.Model, UserMixin):
                               secondaryjoin=(Friendship.friend_id == id),
                               backref=db.backref('friendship_backref', lazy='dynamic'), lazy='dynamic')
 
-
 class UserProfile(db.Model):
     """
     Represents a user profile in the database.
@@ -64,4 +64,22 @@ class UserProfile(db.Model):
     interests = db.Column(db.String(500), nullable=True)
 
     user = db.relationship('User', back_populates='user_profile')
+
+class Notification(db.Model):
+    """
+    Represents a notification for friend requests.
+    """
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    sender_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    message = db.Column(db.String(500))
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    is_read = db.Column(db.Boolean, default=False)
+
+    user = db.relationship('User', foreign_keys=[user_id], backref=db.backref('notifications', lazy='dynamic'))
+    sender = db.relationship('User', foreign_keys=[sender_id])
+
+    def mark_as_read(self):
+        self.is_read = True
+        db.session.commit()
 

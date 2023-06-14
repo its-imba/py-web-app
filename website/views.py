@@ -4,9 +4,10 @@ This module defines the views for the website.
 import json
 from flask import Blueprint, render_template, request, flash, jsonify, redirect, url_for
 from flask_login import login_required, current_user
-from .models import Note, User, UserProfile, Friendship, FriendshipRequest
+from .models import Note, User, UserProfile, Friendship, FriendshipRequest, Notification
 from . import db
 from .forms import ProfileForm, SearchForm
+from datetime import datetime
 
 views = Blueprint('views', __name__)
 
@@ -198,6 +199,17 @@ def add_friend(user_id):
                 db.session.add(friendship_request)
                 db.session.commit()
                 flash('Friend request sent', category='success')
+
+                # Create a new notification for the recipient user
+                sender_id = current_user.id
+                receiver_id = user_id
+                recipient_name = friend.user_profile.first_name  # Get the recipient's first name
+                notification_message = f"You have received a friend request from {current_user.user_profile.first_name}."
+                notification = Notification(sender_id=sender_id, user_id=receiver_id, message=notification_message, timestamp=datetime.utcnow())
+
+                # Save the notification to the database
+                db.session.add(notification)
+                db.session.commit()
         else:
             flash('User not found', category='error')
     except Exception as error:
@@ -205,6 +217,14 @@ def add_friend(user_id):
         print(str(error))
 
     return redirect(url_for('views.profile', user_id=user_id))
+
+
+@views.route('/notifications')
+@login_required
+def notifications():
+    user_notifications = Notification.query.filter_by(user_id=current_user.id, is_read=False).all()
+    return render_template('notifications.html', notifications=user_notifications)
+
 
 @views.route('/accept_friend/<int:request_id>', methods=['POST'])
 @login_required
@@ -224,6 +244,12 @@ def accept_friend(request_id):
             db.session.delete(request)
             db.session.commit()
 
+            # Delete the notification
+            notification = Notification.query.filter_by(user_id=request.sender_id, message=f"You have received a friend request from {current_user.user_profile.first_name}.")
+            if notification:
+                db.session.delete(notification)
+                db.session.commit()
+
             flash('Friend request accepted', category='success')
         else:
             flash('Friend request not found', category='error')
@@ -232,6 +258,8 @@ def accept_friend(request_id):
         print(str(error))
 
     return redirect(url_for('views.profile', user_id=current_user.id))
+
+
 
 @views.route('/reject_friend/<int:user_id>', methods=['POST'])
 @login_required
