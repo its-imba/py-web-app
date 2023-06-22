@@ -154,6 +154,9 @@ def edit_profile():
 @views.route('/search', methods=['GET', 'POST'])
 @login_required
 def search():
+    """
+    Handles the profile search functionality.
+    """
     form = SearchForm()
     if form.validate_on_submit():
         query = form.query.data
@@ -165,6 +168,9 @@ def search():
 @views.route('/profile/<int:user_id>')
 @login_required
 def profile(user_id):
+    """
+    Handles the profile functionality.
+    """
     user = User.query.get(user_id)
     if user is None:
         # Handle the case when the user does not exist
@@ -222,6 +228,9 @@ def add_friend(user_id):
 @views.route('/notifications')
 @login_required
 def notifications():
+    """
+    Shows any pending notifications for a user.
+    """
     user_notifications = Notification.query.filter_by(user_id=current_user.id, is_read=False).all()
     return render_template('notifications.html', notifications=user_notifications)
 
@@ -229,6 +238,9 @@ def notifications():
 @views.route('/accept_friend/<int:request_id>', methods=['POST'])
 @login_required
 def accept_friend(request_id):
+    """
+    Accepts pending friend requests for a user.
+    """
     try:
         request = FriendshipRequest.query.get(request_id)
 
