@@ -8,7 +8,7 @@ pipeline {
             }
         }
 
-        stage('Testing Setup') {
+        stage('Setup Test Environment') {
             steps {
                 sh 'sudo apt-get install -y python3 python3-pip python3-venv'
                 sh 'python3 -m venv ${WORKSPACE}/venv'  // Create a virtual environment
