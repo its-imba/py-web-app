@@ -16,11 +16,6 @@ pipeline {
                 sh 'cd ${WORKSPACE}'
                 sh 'export PATH=/var/lib/jenkins/.local/bin:$PATH'  // Add the directory to PATH
                 sh 'pip install -r requirements.txt'  // Install other dependencies from a requirements file
-            }
-        }
-
-        stage('Verify Dependencies') {
-            steps {
                 sh 'python3 -m pytest --version' // Check pytest is installed
             }
         }
