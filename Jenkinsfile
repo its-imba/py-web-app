@@ -33,6 +33,12 @@ pipeline {
                 '''
                 cobertura coberturaReportFile: 'coverage.xml'
             }
+            post {
+                always {
+                    // Mark the build as unstable if there are warnings
+                    unstable("There are warnings in the build")
+                }
+            }
         }
 
         stage('Build Docker Image') {
