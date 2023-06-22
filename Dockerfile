@@ -1,4 +1,4 @@
-# Using latest python version with slim variant (900mb -> 170mb container size)
+# Using latest python version with slim variant (reduction of 900mb -> 170mb container size)
 FROM python:3.11-slim-bullseye
 WORKDIR /app
 
